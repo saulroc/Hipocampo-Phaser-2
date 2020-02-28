@@ -20,12 +20,20 @@
         this.load.image('fishes', '../images/fishes.png');
         this.load.image('medusa', '../images/mollusk.png');
 
-        this.load.image('booble1', '../images/booble1.png');
-        this.load.image('booble2', '../images/booble2.png');
+        this.load.image('bubble1', '../images/booble1.png');
+        this.load.image('bubble2', '../images/booble2.png');
     }
 
     create() {
         this.add.text(20, 20, "Loading game...");
+
+        this.anims.create({
+            key: "horse_anim",
+            frames: this.anims.generateFrameNumbers("horse"),
+            frameRate: 2,
+            repeat: 3
+        });
+
         this.scene.start("playGame");
     }
 }

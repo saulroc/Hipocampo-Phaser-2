@@ -1,11 +1,22 @@
 var AMAUNT_DIAMONDS = 30;
 var AMAUNT_BOOBLES = 10;
 
+var gameSettings = {
+    playerSpeed: 200
+}
+
 var config = {
     width: 800,
     height: 600,
     backgroundColor: 0x000000,
-    scene: [Scene1, Scene2]
+    scene: [Scene1, Scene2],
+    pixelArt: true,
+    physics: {
+        default: "arcade",
+        arcade: {
+            debug: false
+        }
+    }
 }
 
 GamePlayManager = {
@@ -19,7 +30,7 @@ GamePlayManager = {
 		this.amauntDiamondsCaught = 0;
 		this.endGame = false;
 		
-		this.countSmile = -1;
+		//this.countSmile = -1;
 	},
 	preload: function() {
 		
@@ -40,17 +51,17 @@ GamePlayManager = {
 		
 		//game.add.sprite(0, 0, 'background');
 		
-		this.boobleArray = [];
-		for (var i = 0; i<AMAUNT_BOOBLES; i++) {
-			var xBooble = game.rnd.integerInRange(1, game.width - 50);
-			var yBooble = game.rnd.integerInRange(game.height / 2, game.height * 1.25);
+		//this.boobleArray = [];
+		//for (var i = 0; i<AMAUNT_BOOBLES; i++) {
+		//	var xBooble = game.rnd.integerInRange(1, game.width - 50);
+		//	var yBooble = game.rnd.integerInRange(game.height / 2, game.height * 1.25);
 			
-			var booble = game.add.sprite(xBooble,yBooble, 'booble' + game.rnd.integerInRange(1,2));
-			booble.vel = 0.2 + game.rnd.frac() * 2;
-			booble.alpha = 0.9;
-			booble.scale.setTo(0.2 + game.rnd.frac());
-			this.boobleArray.push(booble);
-		}
+		//	var booble = game.add.sprite(xBooble,yBooble, 'booble' + game.rnd.integerInRange(1,2));
+		//	booble.vel = 0.2 + game.rnd.frac() * 2;
+		//	booble.alpha = 0.9;
+		//	booble.scale.setTo(0.2 + game.rnd.frac());
+		//	this.boobleArray.push(booble);
+		//}
 		
 		
 		//this.medusa = game.add.sprite(500, 150, 'medusa');
@@ -75,15 +86,15 @@ GamePlayManager = {
 			y:-0.031
 			}, 5800, Phaser.Easing.Bounce.InOut, false, 0, 1000, true);
 		
-		this.diamonds = [];
-		for (var i = 0; i < AMAUNT_DIAMONDS; i++ )
-		{
-			var diamond = game.add.sprite(100, 100, 'diamonds');
+		//this.diamonds = [];
+		//for (var i = 0; i < AMAUNT_DIAMONDS; i++ )
+		//{
+		//	var diamond = game.add.sprite(100, 100, 'diamonds');
 			
-			this.putDiamond(diamond);
+		//	this.putDiamond(diamond);
 			
-			this.diamonds.push(diamond);
-		}
+		//	this.diamonds.push(diamond);
+		//}
 		
 		this.explosionGroup = game.add.group();
 		
