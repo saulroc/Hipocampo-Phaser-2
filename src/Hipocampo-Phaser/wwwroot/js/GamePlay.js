@@ -1,5 +1,5 @@
-var AMAUNT_DIAMONDS = 30;
-var AMAUNT_BOOBLES = 10;
+var AMAUNT_DIAMONDS = 15;
+var AMAUNT_BUBBLES = 10;
 
 var gameSettings = {
     playerSpeed: 200
@@ -27,8 +27,8 @@ GamePlayManager = {
 		game.scale.pageAlignVertically = true;
 		
 		this.flagFirstMouseDown = false;
-		this.amauntDiamondsCaught = 0;
-		this.endGame = false;
+		//this.amauntDiamondsCaught = 0;
+		//this.endGame = false;
 		
 		//this.countSmile = -1;
 	},
@@ -79,7 +79,7 @@ GamePlayManager = {
 		//		alpha:[1, 0.5, 0, 0.5, 1]
 		//		}, 630, Phaser.Easing.Exponential.Out, false, 0, 3, false);
 				
-		game.input.onDown.add(this.onTap, this);
+		//game.input.onDown.add(this.onTap, this);
 		
 
 		this.medusa.tweenMedusa = game.add.tween(this.medusa.position).to({
@@ -96,49 +96,49 @@ GamePlayManager = {
 		//	this.diamonds.push(diamond);
 		//}
 		
-		this.explosionGroup = game.add.group();
+		//this.explosionGroup = game.add.group();
 		
-		for (var i = 0; i<10; i++) {
-			this.explosion = this.explosionGroup.create(100, 100, 'explosion');
-			this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
-				x:[0.4, 0.8, 0.4], 
-				y:[0.4, 0.8, 0.4]
-				}, 630, Phaser.Easing.Exponential.Out, false, 0, 0, false);
+		//for (var i = 0; i<10; i++) {
+		//	this.explosion = this.explosionGroup.create(100, 100, 'explosion');
+		//	this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
+		//		x:[0.4, 0.8, 0.4], 
+		//		y:[0.4, 0.8, 0.4]
+		//		}, 630, Phaser.Easing.Exponential.Out, false, 0, 0, false);
 			
-			this.explosion.tweenAlpha = game.add.tween(this.explosion).to({
-				alpha:[1, 0.6, 0]
-				}, 630, Phaser.Easing.Exponential.Out, false, 0, 0, false);
-			this.explosion.anchor.setTo(0.5);
-			this.explosion.kill();
-		}
+		//	this.explosion.tweenAlpha = game.add.tween(this.explosion).to({
+		//		alpha:[1, 0.6, 0]
+		//		}, 630, Phaser.Easing.Exponential.Out, false, 0, 0, false);
+		//	this.explosion.anchor.setTo(0.5);
+		//	this.explosion.kill();
+		//}
 		
-		this.currentScore = 0;
-		var style = {
-			font: 'bold 30pt Arial',
-			fill: '#FFFFFF',
-			align: 'center'
-		}
+		//this.currentScore = 0;
+		//var style = {
+		//	font: 'bold 30pt Arial',
+		//	fill: '#FFFFFF',
+		//	align: 'center'
+		//}
 		
-		this.scoreText = game.add.text(game.width/2,40,this.currentScore, style);
-		this.scoreText.anchor.setTo(0.5);
+		//this.scoreText = game.add.text(game.width/2,40,this.currentScore, style);
+		//this.scoreText.anchor.setTo(0.5);
 		
-		this.totalTime = 15;
-		this.timerText = game.add.text(1000,40,this.totalTime + '', style);
-		this.timerText.anchor.setTo(0.5);
+		//this.totalTime = 15;
+		//this.timerText = game.add.text(1000,40,this.totalTime + '', style);
+		//this.timerText.anchor.setTo(0.5);
 		
-		this.timerGameOver = game.time.events.loop(Phaser.Timer.SECOND, function() {
-			if (this.flagFirstMouseDown) {
-				this.totalTime--;
-				this.timerText.text = this.totalTime + '';
-				if(this.totalTime <= 0) {
-					this.endGame = true;
-					this.medusa.tweenMedusa.stop();
-					game.time.events.remove(this.timerGameOver);
-					this.showFinalMessage('GAME OVER!');					
-				}
-			}
+		//this.timerGameOver = game.time.events.loop(Phaser.Timer.SECOND, function() {
+		//	if (this.flagFirstMouseDown) {
+		//		this.totalTime--;
+		//		this.timerText.text = this.totalTime + '';
+		//		if(this.totalTime <= 0) {
+		//			this.endGame = true;
+		//			this.medusa.tweenMedusa.stop();
+		//			game.time.events.remove(this.timerGameOver);
+		//			this.showFinalMessage('GAME OVER!');					
+		//		}
+		//	}
 				
-		}, this);
+		//}, this);
 		
 		
 		

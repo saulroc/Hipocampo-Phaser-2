@@ -6,9 +6,12 @@
     create() {
         this.background = this.add.image(0, 0, 'background');
         this.background.setOrigin(0, 0);
+        this.amauntDiamondsCaught = 0;
+        this.endGame = false;
 
         this.bubbleArray = [];
         this.createBubbles(this.bubbleArray);
+        this.enemies = this.physics.add.group();
 
         this.horse = this.physics.add.sprite(config.width / 2, config.height / 2, 'horse');
         //this.horse.setFrame(0);
@@ -24,8 +27,12 @@
 
         //this.horse.play("horse_anim");
 
-        this.medusa = this.add.image(config.width / 4, 150, 'medusa');
-        this.shark = this.add.image(config.width / 2, 20, 'shark');
+        this.medusa = this.physics.add.sprite(config.width / 4, 150, 'medusa');
+        this.medusa.setVelocityY(-100);
+        this.enemies.add(this.medusa);
+        this.shark = this.physics.add.sprite(config.width / 2, 20, 'shark');
+        this.shark.setVelocityX(-100);
+        this.enemies.add(this.shark);
         this.fishes = this.add.image(config.width / 4, config.height * 0.85, 'fishes');
 
         this.diamonds = this.physics.add.group(); //= [];
@@ -38,12 +45,73 @@
 
         }
 
-        this.input.on('gameobjectdown', this.destroyDiamond, this);
-        this.cursorKeys = this.input.keyboard.createCursorKeys();
-        this.cursorKeys = this.input.keyboard.createCursorKeys();
+        this.explosionGroup = this.physics.add.group();
 
-        //this.add.text(20, 20, "Loading game...", { font: "25px Arial", fill: "yellow" });
-        //this.scene.start("playGame");
+        //this.createExplosions();
+
+        this.input.on('gameobjectdown', this.destroyDiamondClick, this);
+        this.cursorKeys = this.input.keyboard.createCursorKeys();
+        this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.projectiles = this.add.group();
+
+        this.currentScore = 0;
+        var style = {
+            font: 'bold 30pt Arial',
+            fill: '#FFFFFF',
+            align: 'center'
+        }
+
+        this.scoreText = this.add.text(config.width / 2, 40, this.currentScore, style);
+        
+        this.totalTime = 15;
+        this.timerText = this.add.text(11 * config.width / 12, 40, this.totalTime + '', style);
+        
+        //this.timerGameOver = this.time.events.loop(Phaser.Timer.SECOND, function () {
+        //    if (this.flagFirstMouseDown) {
+        //        this.totalTime--;
+        //        this.timerText.text = this.totalTime + '';
+        //        if (this.totalTime <= 0) {
+        //            this.endGame = true;
+        //            this.medusa.tweenMedusa.stop();
+        //            this.time.events.remove(this.timerGameOver);
+        //            this.showFinalMessage('GAME OVER!');
+        //        }
+        //    }
+
+        //}, this);
+
+        this.physics.add.collider(this.projectiles, this.diamonds, function (projectile, diamond) {
+            projectile.destroy();
+        });
+
+        this.physics.add.overlap(this.horse, this.enemies, this.hitHorse, null, this);
+
+        this.physics.add.overlap(this.horse, this.diamonds, this.destroyDiamondHorse, null, this);
+
+        this.physics.add.overlap(this.projectiles, this.enemies, this.hitEnemy, null, this);
+        
+        this.tweenManager = new TweenManager(this);
+
+        this.tweenManager.add({tartegs: this.horse});
+
+    }
+
+    createExplosions() {
+        for (var i = 0; i < 10; i++) {
+            this.explosion = this.add.image(100, 100, 'explosion');
+            this.explosionGroup.add(explosion);
+            this.explosion.tweenScale = this.tweenManager.add(this.explosion.scale).to({
+                x: [0.4, 0.8, 0.4],
+                y: [0.4, 0.8, 0.4]
+            }, 630, Phaser.Easing.Exponential.Out, false, 0, 0, false);
+
+            this.explosion.tweenAlpha = this.tweenManager.add(this.explosion).to({
+                alpha: [1, 0.6, 0]
+            }, 630, Phaser.Easing.Exponential.Out, false, 0, 0, false);
+            
+            this.explosion.kill();
+        }
     }
 
     createBubbles(arrayBubble) {
@@ -65,11 +133,12 @@
         //if (this.flagFirstMouseDown && !this.endGame) {
 
         //    //this.shark.x--;
-        //    //if (this.shark.x + this.shark.width <= -5) {
-        //    //    this.shark.x = config.width;
-        //    //    this.shark.y = Phaser.Math.Between(0, config.height - this.shark.height);
-        //    //}
-            this.moveXCoordenate(this.shark, -2, true);
+            if (this.shark.x + this.shark.width <= -5) {
+                this.shark.x = config.width;
+                this.shark.y = Phaser.Math.Between(0, config.height - this.shark.height);
+                this.shark.setVelocityX(-50 + Phaser.Math.Between(-150, 0));
+            }
+            //this.moveXCoordenate(this.shark, -2, true);
 
         //    //this.fishes.x += 0.3;
         //    //if (this.fishes.x >= config.width + 5) {
@@ -104,13 +173,30 @@
 
             var i = this.comprobarSolapamientoConArray(this.getBoundsHorse());
             if (i >= 0) {
-                this.destroyDiamond(i);
+                this.destroyDiamond(this.diamonds.getChildren()[i]);
+            }
+
+            if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+                this.shootBubbles();
+            }
+
+            for (var i = 0; i < this.projectiles.getChildren().length; i++) {
+                var bubbleShoot = this.projectiles.getChildren()[i];
+                bubbleShoot.update();
             }
 
         //}
     }
 
+    shootBubbles() {
+        var bubbleShoot = new Bubble(this);
+        
+    }
+
     moveHorseManager() {
+
+        this.horse.setVelocityX(0.95 * this.horse.body.velocity.x);
+        this.horse.setVelocityY(0.95 * this.horse.body.velocity.y);
 
         if (this.cursorKeys.left.isDown) {
             this.horse.setVelocityX(-gameSettings.playerSpeed);
@@ -153,30 +239,36 @@
             object.y = Phaser.Math.Between(0, config.height - object.height);
     }
 
-    hitEvalue() {
-        if (this.isRectanglesOverlapping(this.getBoundsDiamond(this.medusa), this.getBoundsHorse())
-			|| this.isRectanglesOverlapping(this.getBoundsDiamond(this.shark), this.getBoundsHorse())) {
+    hitHorse() {
+        
+		this.currentScore -= 200;
+		this.scoreText.text = this.currentScore;
+		if (this.horse.tweenAlpha)
+		{
+		    this.horse.hurt = true;
 
-			this.currentScore -= 200;
-			this.scoreText.text = this.currentScore;
-			this.horse.hurt = true;
-			this.horse.tweenAlpha.start();
-			this.horse.tweenAlpha.onComplete.add(function (currentTartget, currentTween) {
-				currentTartget.hurt = false;
-			}, this);
+		    this.horse.tweenAlpha.start();
+		    this.horse.tweenAlpha.onComplete.add(function (currentTartget, currentTween) {
+		        currentTartget.hurt = false;
+		    }, this);
 
-			var explosion = this.explosionGroup.getFirstDead();
-			if (explosion) {
-				explosion.reset(this.horse.x, this.horse.y);
-				explosion.tweenScale.start();
-				explosion.tweenAlpha.start();
+		    var explosion = this.explosionGroup.getFirstDead();
+		    if (explosion) {
+		        explosion.reset(this.horse.x, this.horse.y);
+		        explosion.tweenScale.start();
+		        explosion.tweenAlpha.start();
 
-				explosion.tweenAlpha.onComplete.add(function (currentTartget, currentTween) {
-				    currentTartget.kill();
-				}, this);
-			}
-
+		        explosion.tweenAlpha.onComplete.add(function (currentTartget, currentTween) {
+		            currentTartget.kill();
+		        }, this);
+		    }
 		}
+				
+    }
+
+    hitEnemy(projectile, enemy) {
+        projectile.destroy();
+        Console.log(enemy);
     }
 
     getBoundsHorse () {
@@ -201,7 +293,7 @@
         if (this.amauntDiamondsCaught >= AMAUNT_DIAMONDS) {
             this.endGame = true;
             //this.medusa.tweenMedusa.stop();
-            game.time.events.remove(this.timerGameOver);
+            //this.time.events.remove(this.timerGameOver);
             this.showFinalMessage('CONGRATULATIONS!');			
         }
     }
@@ -209,9 +301,6 @@
     putDiamond (diamond) {
         diamond.setFrame(Phaser.Math.Between(0,3));
         diamond.setScale(0.30 + Math.random());
-        //diamond.anchor.setTo(0.5);        
-        //diamond.x = Phaser.Math.Between(50, config.width - diamond.width);
-        //diamond.y = Phaser.Math.Between(50, config.height - diamond.height);
         diamond.setRandomPosition(0, 0, game.config.width, game.config.height);
         var intentosDeColocacion = 50;
         while((this.comprobarSolapamientoConArray(this.getBoundsDiamond(diamond)) >= 0
@@ -228,33 +317,38 @@
         } else
             diamond.visible = false;
     }
-    destroyDiamond(pointer, diamond) {
+    destroyDiamondHorse(horse, diamond) {
+        this.destroyDiamond(diamond);
+    }
+    destroyDiamondClick(pointer, diamond) {
+        this.destroyDiamond(diamond);				
+    }
+    destroyDiamond(diamond) {
         if (diamond && diamond.visible) {
-			
-            diamond.visible = false;
-			
-            //var explosion = this.explosionGroup.getFirstDead();
-            //if (explosion) {
-            //    explosion.reset(diamond.x, diamond.y);
-            //    explosion.tweenScale.start();
-            //    explosion.tweenAlpha.start();	
-				
-            //    explosion.tweenAlpha.onComplete.add(function (currentTartget, currentTween) {
-            //        currentTartget.kill();
-            //    }, this);
-            //}
 
-            this.increaseScore();			
-			
+            diamond.visible = false;
+            diamond.disableBody(true, true);
+            var explosion = this.explosionGroup.getFirstDead();
+            if (explosion) {
+                explosion.reset(diamond.x, diamond.y);
+                explosion.tweenScale.start();
+                explosion.tweenAlpha.start();	
+
+                explosion.tweenAlpha.onComplete.add(function (currentTartget, currentTween) {
+                    currentTartget.kill();
+                }, this);
+            }
+
+            this.increaseScore();
+
         }
-		
-		
+
     }
     showFinalMessage (message) {
-        var backgroundAlpha = game.add.bitmapData(game.width,game.height);
+        var backgroundAlpha = this.add.bitmapData(config.width,config.height);
         backgroundAlpha.ctx.fillStyle = '#000000';
-        backgroundAlpha.ctx.fillRect(0,0,game.width,game.height);
-        var bgSprite = game.add.sprite(0,0,backgroundAlpha);
+        backgroundAlpha.ctx.fillRect(0, 0, config.width, config.height);
+        var bgSprite = this.add.sprite(0,0,backgroundAlpha);
         bgSprite.alpha = 0.5;
 		
         var style = {
@@ -263,45 +357,10 @@
             align: 'center'
         }
 		
-        this.textFieldFinalMessage = game.add.text(game.width/2,game.height/2,message,style);
-        this.textFieldFinalMessage.anchor.setTo(0.5);
-    }
+        this.textFieldFinalMessage = this.add.text(config.width / 2, config.height / 2, message, style);
+        
+    }    
 	
-    getBoundsDiamond(currentDiamond) {
-        return new Phaser.Geom.Rectangle(currentDiamond.x, currentDiamond.y, currentDiamond.width, currentDiamond.height);
-    }
-	
-    isRectanglesOverlapping (rectangulo1, rectangulo2) {
-		
-        if (rectangulo1.x > rectangulo2.x+rectangulo2.width
-		    || rectangulo2.x > rectangulo1.x+rectangulo1.width
-			|| rectangulo1.y > rectangulo2.y+rectangulo2.height
-			|| rectangulo2.y > rectangulo1.y+rectangulo1.height) {
-            return false;
-        }
-			
-        return true
-		
-    }
-	
-    comprobarSolapamientoConArray(rectanguloNuevo) {
-        for(var i = 0; i < this.diamonds.length; i++) {
-            if (this.diamonds[i].visible) {
-                var rectangulo = this.getBoundsDiamond(this.diamonds[i]);
-                if (this.isRectanglesOverlapping(rectangulo, rectanguloNuevo)) return i;	
-            }			
-        }
-		
-        return -1;
-    }
-	
-    moverDiamantes () {
-        for (i=0; i < this.diamonds.length; i++) {
-            var diamond = this.diamonds[i];
-            diamond.x += Phaser.Math.Between(-1, 1);
-            diamond.y += Phaser.Math.Between(-1, 1);
-        }
-    }
     //onTap() {
     //    this.flagFirstMouseDown = !this.flagFirstMouseDown;
     //    //this.horse.frame = (this.horse.frame + 1) % 2;				

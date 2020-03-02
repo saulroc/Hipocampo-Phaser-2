@@ -22,6 +22,10 @@
 
         this.load.image('bubble1', '../images/booble1.png');
         this.load.image('bubble2', '../images/booble2.png');
+        this.load.spritesheet('bubbleShoot', '../images/boobleShoot.png', {
+            frameWidth: 39,
+            frameHeight: 32
+        });
     }
 
     create() {
@@ -32,6 +36,13 @@
             frames: this.anims.generateFrameNumbers("horse"),
             frameRate: 2,
             repeat: 3
+        });
+
+        this.anims.create({
+            key: "bubbleShoot_anim",
+            frames: this.anims.generateFrameNumbers("bubbleShoot"),
+            frameRate: 5,
+            repeat: -1
         });
 
         this.scene.start("playGame");
