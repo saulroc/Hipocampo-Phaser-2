@@ -15,7 +15,10 @@
             frameHeight: 84
         });
 
-        this.load.image('explosion', '../images/explosion.png');
+        this.load.spritesheet('explosion', '../images/explosion.png', {
+            frameWidth: 160,
+            frameHeight: 180
+        });
         this.load.image('shark', '../images/shark.png');
         this.load.image('fishes', '../images/fishes.png');
         this.load.image('medusa', '../images/mollusk.png');
@@ -26,6 +29,9 @@
             frameWidth: 39,
             frameHeight: 32
         });
+
+        this.load.audio('audio_pop', '../sounds/sfxPop.mp3');
+        this.load.audio('audio_music_loop', '../sounds/musicLoop.mp3');
     }
 
     create() {
@@ -36,6 +42,14 @@
             frames: this.anims.generateFrameNumbers("horse"),
             frameRate: 2,
             repeat: 3
+        });
+
+        this.anims.create({
+            key: "explosion_anim",
+            frames: this.anims.generateFrameNumbers("explosion"),
+            frameRate: 2,
+            repeat: 0,
+            hideOnComplete: true
         });
 
         this.anims.create({

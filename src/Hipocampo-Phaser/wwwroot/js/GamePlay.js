@@ -1,16 +1,20 @@
-var AMAUNT_DIAMONDS = 15;
-var AMAUNT_BUBBLES = 10;
-
 var gameSettings = {
-    playerSpeed: 200
+    playerSpeed: 200,
+    AMAUNT_DIAMONDS: 30,
+    timeGame: 30,
+    AMAUNT_BUBBLES: 10
 }
 
 var config = {
-    width: 800,
-    height: 600,
+    width: 1136,
+    height: 647,
     backgroundColor: 0x000000,
     scene: [Scene1, Scene2],
     pixelArt: true,
+    /*scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },*/
     physics: {
         default: "arcade",
         arcade: {
@@ -82,9 +86,9 @@ GamePlayManager = {
 		//game.input.onDown.add(this.onTap, this);
 		
 
-		this.medusa.tweenMedusa = game.add.tween(this.medusa.position).to({
-			y:-0.031
-			}, 5800, Phaser.Easing.Bounce.InOut, false, 0, 1000, true);
+		//this.medusa.tweenMedusa = game.add.tween(this.medusa.position).to({
+		//	y:-0.031
+		//	}, 5800, Phaser.Easing.Bounce.InOut, false, 0, 1000, true);
 		
 		//this.diamonds = [];
 		//for (var i = 0; i < AMAUNT_DIAMONDS; i++ )

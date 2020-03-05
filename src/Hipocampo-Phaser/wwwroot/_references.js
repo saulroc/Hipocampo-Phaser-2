@@ -1,5 +1,6 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="js/bubble.js" />
+/// <reference path="js/explosion.js" />
 /// <reference path="js/gameplay.js" />
 /// <reference path="js/phaser.js" />
 /// <reference path="js/scene1.js" />
