@@ -138,6 +138,10 @@
         }
         this.musicSound.play(musicConfig);
         
+        var message = "Press click to start or pause";
+        this.textFieldFinalMessage = this.add.text(config.width / 2, config.height / 2, message, style);
+        this.textFieldFinalMessage.setOrigin(0.5);
+
     }
 
     decreaseTime() {
@@ -395,8 +399,8 @@
             align: 'center'
         }
 		
-        this.textFieldFinalMessage = this.add.text(config.width / 2, config.height / 2, message, style);
-        this.textFieldFinalMessage.setOrigin(0.5);
+        this.textFieldFinalMessage.setDepth(1000);
+        this.textFieldFinalMessage.text = message;
         
     }    
 	
@@ -431,10 +435,12 @@
 
     onTap() {
         this.flagFirstMouseDown = !this.flagFirstMouseDown;
-        //this.horse.frame = (this.horse.frame + 1) % 2;				
+        //this.horse.frame = (this.horse.frame + 1) % 2;	
+        var message = "Press click to start or pause";
         if (this.flagFirstMouseDown) {
             this.shark.setVelocityX(-50 + Phaser.Math.Between(-150, 0));
             this.medusa.setVelocityY(-50 + Phaser.Math.Between(-150, 0));
+            message = "";
         } else {
             this.shark.setVelocityX(0);
             this.medusa.setVelocityY(0);
@@ -442,6 +448,9 @@
         this.timerGameOver.paused = this.endGame || !this.flagFirstMouseDown ;
         //this.shark.active = this.flagFirstMouseDown;
         //this.medusa.active = this.flagFirstMouseDown;
+        
+        if (!this.endGame)
+            this.textFieldFinalMessage.text = message;
                 
     }
 }

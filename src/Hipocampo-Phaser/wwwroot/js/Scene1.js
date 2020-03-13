@@ -59,6 +59,21 @@
             repeat: -1
         });
 
+        var message = "Use cursors to move hipocampo,\n press space bar to shoot bubbles,\n click to pause or resume game.\n Click to start!"
+        var style = {
+            font: 'bold 24pt Arial',
+            fill: '#FFFFFF',
+            align: 'center'
+        }
+
+        this.textFieldFinalMessage = this.add.text(config.width / 2, config.height / 2, message, style);
+        this.textFieldFinalMessage.setOrigin(0.5);
+
+        this.input.on('pointerdown', this.onTap, this);
+        
+    }
+
+    onTap() {
         this.scene.start("playGame");
     }
 }
